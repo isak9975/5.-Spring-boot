@@ -15,10 +15,20 @@ public class TodoDTO {
 	private String title; // Todo의 타이틀
 	private boolean done;//Todo의 완료 여부
 	
+	//생성자
 	public TodoDTO(TodoEntity entity) {
 		this.id = entity.getId();
 		this.title = entity.getTitle();
 		this.done = entity.isDone();
+	}
+	
+	//TodoDto -> TodoEntity
+	public static TodoEntity toEntity(TodoDTO dto) {
+		return TodoEntity.builder()
+							.id(dto.getId())
+							.title(dto.getTitle())
+							.done(dto.isDone())
+							.build();
 	}
 	
 }
