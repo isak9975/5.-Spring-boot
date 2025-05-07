@@ -21,7 +21,7 @@ import com.korea.todo.model.TodoEntity;
 import com.korea.todo.service.TodoService;
 
 @RestController
-@RequestMapping("Todo")
+@RequestMapping("todo")
 public class TodoController {
 	
 	//실행할 때 service 객체가 필드로 직접 주입된다.,
@@ -43,7 +43,7 @@ public class TodoController {
 //===========================================================================
 	
 	//요청을 통해서 넘어오는 정보는 요청본문에 담겨서 온다.
-	@PostMapping("/create")
+	@PostMapping
 	public ResponseEntity<?> createTodo(@RequestBody TodoDTO dto){
 		try {
 			String tempararyUserId = "temporary-user"; //임시 유저 이름.
@@ -82,7 +82,7 @@ public class TodoController {
 	}
 	
 	
-	@GetMapping("/find")
+	@GetMapping
 	public ResponseEntity<?> retriveTodolist() {
 		String temmporaryUserId="temporary-user";
 		
