@@ -56,7 +56,7 @@ public class UserController {
 	//ID를 통해 이름과 이메일 수정하기
 	@PostMapping("/update")
 	public ResponseEntity<?> updateUser(@RequestBody UserDTO userDTO){
-		UserDTO response = userService.updateUser(userDTO); 
+		List<UserDTO> response = userService.updateUser(userDTO); 
 		return ResponseEntity.ok(response);
 	}
 	

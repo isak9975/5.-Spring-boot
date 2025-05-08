@@ -60,7 +60,7 @@ public class UserService {
 	
 	
 	//ID를 통해 이름과 이메일 수정하기
-	public UserDTO updateUser(UserDTO userDTO) {
+	public List<UserDTO> updateUser(UserDTO userDTO) {
 		
 		UserEntity userEntity = userDTO.toEntity();
 		
@@ -77,7 +77,7 @@ public class UserService {
 			userRepository.save(entity);
 		});		
 		
-		return findEntity.get().toDto();
+		return findAll();
 	}
 	
 	
