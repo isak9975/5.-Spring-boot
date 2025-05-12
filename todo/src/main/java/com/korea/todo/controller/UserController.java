@@ -2,6 +2,8 @@ package com.korea.todo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,6 +33,8 @@ public class UserController {
 	//TokenProvider 클래스 주입하기
 	private final TokenProvider tokenProvider;
 	
+	private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+	
 	
 	
 	//회원가입(유저추가)
@@ -42,7 +46,7 @@ public class UserController {
 			//UserDTO기반으로 UserEntity객체 생성하기
 			UserEntity entity = UserEntity.builder().
 					username(dto.getUsername())
-					.password(dto.getPassword())
+					.password(passwordEncoder.encode(dto.getPassword()))
 					.build();
 			//UserEntity 객체를 service 로 보내서 데이터베이스에 추가하기.
 			UserEntity result = service.create(entity);
@@ -64,11 +68,14 @@ public class UserController {
 	}
 	
 	
+	//로그인
 	//Get으로 만들면 브라우저의 주소창에 아디이와 비밀번호가 노출될 수 있다.
 	@PostMapping("/signin")
 	public ResponseEntity<?> authenticate(@RequestBody UserDTO dto){
 		//요청 본문으로 전달된 UserDTO의 username과 password을 기반으로 유저를 조회
-		UserEntity user = service.getByCredential(dto.getUsername(), dto.getPassword());
+		UserEntity user = service.getByCredential(dto.getUsername(), 
+									dto.getPassword(),
+									passwordEncoder);
 		
 		//조회된 user 가 있으면
 		if(user != null) {
