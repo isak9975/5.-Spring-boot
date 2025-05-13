@@ -80,6 +80,7 @@ public class TokenProvider {
 		Claims claims = Jwts.parser().setSigningKey(SECRET_KEY) //서명 검증용 키 설정
 									.parseClaimsJws(token) //토큰 파싱 및 서명 검증
 									.getBody(); //내부 페이로드(Claims)획득 페이로드(sub,iss,iat,exp...)
+		
 		return claims.getSubject(); //sub 클레임(사용자 ID) 반환.
 	}
 	

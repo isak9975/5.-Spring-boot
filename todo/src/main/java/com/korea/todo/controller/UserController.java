@@ -46,6 +46,7 @@ public class UserController {
 			//UserDTO기반으로 UserEntity객체 생성하기
 			UserEntity entity = UserEntity.builder().
 					username(dto.getUsername())
+					//비밀번호를 그냥 저장하지 않고 암호화.
 					.password(passwordEncoder.encode(dto.getPassword()))
 					.build();
 			//UserEntity 객체를 service 로 보내서 데이터베이스에 추가하기.
@@ -73,6 +74,7 @@ public class UserController {
 	@PostMapping("/signin")
 	public ResponseEntity<?> authenticate(@RequestBody UserDTO dto){
 		//요청 본문으로 전달된 UserDTO의 username과 password을 기반으로 유저를 조회
+			//+ 비밀번호 암호화 객체도 같이 넘김.
 		UserEntity user = service.getByCredential(dto.getUsername(), 
 									dto.getPassword(),
 									passwordEncoder);

@@ -45,11 +45,15 @@ public class UserService {
 	//로그인할 때 사용할 예정.
 	public UserEntity getByCredential(String username,String password, final PasswordEncoder encoder) {
 		
+		//넘어온 유저의 이름을 사용해서 유저 엔티티 찾아오기.
 		final UserEntity originalUser = repository.findByUsername(username);
+		
+		//검색된 유저 엔티티가 있거나 & 입력한 비밀번호와 검색한 유저엔티티의 비밀번호 일치할때
 		if(originalUser != null && encoder.matches(password, originalUser.getPassword())) {
+			//유저 엔티티를 반환.
 			return originalUser;
 		}
-		
+		System.out.println("로그인 실패");
 		return null;
 	}
 	
