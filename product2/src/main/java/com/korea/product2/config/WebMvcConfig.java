@@ -16,8 +16,8 @@ public class WebMvcConfig implements WebMvcConfigurer{
 			.allowedOrigins("http://localhost:3000")
 			.allowedMethods("GET","POST","PUT","DELETE")
 			.allowedHeaders("*")
-			.allowCredentials(true)
-			.maxAge(MAX_AGE_SECS);
+			.allowCredentials(true);
+//			.maxAge(MAX_AGE_SECS);
 		
 	}
 	

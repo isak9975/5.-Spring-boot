@@ -4,8 +4,10 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,7 +39,19 @@ public class ProductController {
 		List<ProductDTO> response = service.findAll();
 		return ResponseDTO.<ProductDTO>builder().data(response).build();
 	}
+	
 	//u
+	@PutMapping
+	public ResponseDTO<?> update(@RequestBody ProductDTO dto){
+		List<ProductDTO> response = service.update(dto);
+		return ResponseDTO.<ProductDTO>builder().data(response).build();
+	}
+	
 	//d
+	@DeleteMapping
+	public ResponseDTO<?> delete(@RequestBody ProductDTO dto){
+		List<ProductDTO> response = service.delete(dto);
+		return ResponseDTO.<ProductDTO>builder().data(response).build();
+	}
 
 }
