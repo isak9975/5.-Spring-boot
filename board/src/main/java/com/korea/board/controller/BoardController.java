@@ -51,6 +51,14 @@ public class BoardController {
 		return ResponseEntity.ok(response);
 	}
 	
+	//R id를 통한 게시글 한 건 조회하기("/{id}")(@PathVariable 사용하기)
+	@GetMapping("/{id}")
+	public ResponseEntity<?> findById(@PathVariable(name = "id")Long id){
+		List<BoardDTO> result = service.findById(id);
+		ResponseDTO response = ResponseDTO.<BoardDTO>builder().data(result).build();
+		return ResponseEntity.ok(response);
+	}
+	
 	//U
 	@PutMapping("/{id}/post")
 	public ResponseEntity<?> update(@PathVariable(name = "id")Long id,@RequestBody BoardDTO dto){
@@ -62,9 +70,8 @@ public class BoardController {
 	//D
 	@DeleteMapping("{id}")
 	public ResponseEntity<?> delete(@PathVariable(name = "id")Long id){
-		List<BoardDTO> result = service.delete(id);
-		ResponseDTO response = ResponseDTO.<BoardDTO>builder().data(result).build();
-		return ResponseEntity.ok(response);
+		boolean result = service.delete(id);
+		return ResponseEntity.ok(result);
 	}
 	
 

@@ -1,5 +1,6 @@
 package com.korea.board.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -66,6 +67,22 @@ public class BoardService {
 		return reulst;
 	}
 	
+	//R id 를 통한 게시글 한건 조회하기
+	public List<BoardDTO> findById(Long id) {
+		
+		if(id <= 0) {
+			throw new RuntimeException("[개별조회]id가 올바르지 않습니다.");
+		}
+		
+		List<BoardDTO> list = new ArrayList<BoardDTO>() ;
+		
+		if(repository.findById(id).isPresent()) {	
+			list.add(repository.findById(id).get().toDto());
+		}
+			
+		return list; 
+	}
+	
 	//U
 	@Transactional
 	public List<BoardDTO> update(Long id,BoardDTO dto){
@@ -89,18 +106,26 @@ public class BoardService {
 	
 	//D
 	@Transactional
-	public List<BoardDTO> delete(Long id){
+	public boolean delete(Long id){
 		
-		if(repository.existsById(id)) {
-			repository.deleteById(id);
-		}else {
+		if(!repository.existsById(id)) {
 			throw new RuntimeException("없는 id 입니다.");
 		}
 		
-		return findAll(); 
+		if(repository.existsById(id)) {
+			
+			repository.deleteById(id);
+			
+		}else {
+			return false;
+		}
+		
+		return true; 
 	}
 	
 	
+	
+	//DTO 검증
 	public void vaildate(BoardDTO dto) {
 		if(dto==null) {
 			throw new RuntimeException("[오류] DTO가 비어있습니다.");
