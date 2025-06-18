@@ -1,9 +1,11 @@
 package com.korea.todo.security;
 
+import java.nio.file.attribute.UserPrincipal;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import com.korea.todo.model.UserEntity;
@@ -71,8 +73,24 @@ public class TokenProvider {
 				.setIssuedAt(new Date()) //iat 클레임 : 발급 시각
 				.setExpiration(expiryDate) //exp 클레임 : 만료시각
 				.compact(); //최종 직렬화된 토큰 문자열 반환.
-	}
+	}//end create
 	
+	//토큰을 생성하는 create메서드 오버로딩하기
+	public String create(Authentication authentication) {
+		//토큰만료날짜
+		Date expiryDate = Date.from(Instant.now().plus(1,ChronoUnit.DAYS));
+		
+		//JWT 토큰 생성.
+		return Jwts.builder()
+				//header에 들어갈 내용 및 서명을 하기 위한 SECRET_KEY
+				.signWith(SignatureAlgorithm.HS512,SECRET_KEY) //헤더+서명 알고리즘 설정
+				.setSubject(userPrincipal.getName())//sub 클레임 : 사용자 고유 ID
+				.setIssuer("demo app") //iss 클레임 : 토큰 발급자
+				.setIssuedAt(new Date()) //iat 클레임 : 발급 시각
+				.setExpiration(expiryDate) //exp 클레임 : 만료시각
+				.compact(); //최종 직렬화된 토큰 문자열 반환.
+		
+	}
 	
 	
 	//토큰 검사(vaildate) 메서드

@@ -24,11 +24,13 @@ public class UserEntity {
 	private String id;
 	
 	private String username;
+	private String authProvider;
 	private String password;
 	
 	
 	public UserEntity(UserDTO dto) {
 		username = dto.getUsername();
+		authProvider = dto.getAuthProvider();
 		password = dto.getPassword();
 		id = dto.getId();
 	}

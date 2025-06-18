@@ -3,6 +3,7 @@ package com.korea.todo.config;
 
 import java.util.Arrays;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -15,6 +16,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.korea.todo.security.JwtAuthenticationFilter;
+import com.korea.todo.security.OAuthUserServiceImpl;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,6 +27,8 @@ public class WebSecurityConfig {
 	
 	//필터 클래스 주입하기
 	private final JwtAuthenticationFilter jwtAuthenticationFilter;
+	
+	@Autowired OAuthUserServiceImpl oAuthUserServiceImpl;
 	
 	//HttpSecurity http
 	//스프링 시큐리티에서 웹 보안 설정을 구성하기 위해 제공하는 보안 빌더 객체이다.
@@ -48,11 +52,23 @@ public class WebSecurityConfig {
 				//권한(.permitAll) 상관없이 누구나 접근할 수 있다.
 					// "/" : 루트경로", "/auth/**" : /auth/로 시작하는 모든 하위 경로.
 					
-					authorizeRequestConfigurer.requestMatchers("/","/auth/**")
+					authorizeRequestConfigurer.requestMatchers("/","/auth/**","/oauth2/**")
 					//위에 선언된 url패턴 이외의 모든 요청은(.anyRequest())
 					//인증된 사용자만(.authenticated()) 접근 가능하다.
 					.permitAll().anyRequest().authenticated() 
-			);
+			)
+			.oauth2Login()
+			//oauth2 로그인 설정
+			.redirectionEndpoint()
+			.baseUri("/oauth2/callback/*")
+			//http://localhost:5000/oauth2/callback/* 으로 들어오는 요청을
+			//redirectionEndpoint에 설정된 곳으로 리다이렉트 하라는 뜻
+			//아무 주소도 넣지 않았다면 baseUri인 'http://localhost:5000으로 리다이렉트 한다.'
+			.and()
+			.userInfoEndpoint() //OAuth2 인증이 성공한 후, 사용자 프로필 데이터를 가져오는 역
+			.userService(oAuthUserServiceImpl) //사용자 정볼르 처리하는 서비스를 지정.
+			;
+			
 		
 
 		//스프링 시큐리티 필터체인에 우리가 만든 필터를 삽입하는 위치를 지정하는 설정
@@ -73,7 +89,8 @@ public class WebSecurityConfig {
 		//CORS 설정을 담기위한 객체의 생성.
 		CorsConfiguration configuration = new CorsConfiguration();
 		//허용할 출처(Origin) 지정.
-		configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+		configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000",
+				"http://app.springboot-kis.store/","https://app.springboot-kis.store/"));
 		//허용할 메서드 지정.
 		configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE"));
 		//허용할 요청 헤더를 지정("*"는 모든 헤더를 허용하겠다는 의미)

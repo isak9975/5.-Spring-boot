@@ -1,0 +1,22 @@
+custom:
+  test-message: "dev profile loaded!"
+
+spring:
+  security:
+    oauth2:
+      client: #OAuth2 클아이언트 설정 시작
+        registration: # OAuth2 클라이언트 등록 정보
+          github: # Github 제공자에 대한 설정
+            clientId: Ov23li0OwdusORplMvrJ # Github OAuth 앱의 Client ID(gitgub에서 발급)
+            clientSecret: bdd5343130a0a3a93d0c30e67b108db49b59a72c # Github OAuth 앱의 Client Secret 
+            redirectUri: "{baseUrl}/oauth2/callback/{registrationId}" # 사용자가 로그인 승인 후 돌아올 리다이렉트 URI
+            scope: # Github로 부터 어떤 정보를 요청할지 정의
+              - user:email #이메일 주소 조회 허용
+              - read:user #프로필 정보 읽기 권한
+      provider: # OAuth2 인증 제공자 설정
+       github: # github에 대한 provider 설정
+         authorization-uri: https://github.com/login/oauth/authorize
+        # 사용자가 로그인할 때 요청되는 Github 인증 페이지 URL
+        # 이 URL로 리다이렉션 되면 Github 로그인 화면이 뜬다.
+         token-uri: https://github.com/login/oauth/access_token
+         user-info-uri: https://api.github.com/user
