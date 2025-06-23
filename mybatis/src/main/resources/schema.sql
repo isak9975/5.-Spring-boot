@@ -1,0 +1,5 @@
+CEARTE TABLE "user"(
+	id int auto_INCREMENT PRIMARY KEY,
+	name VARCHAR(100),
+	email VARCHAR(100)
+)

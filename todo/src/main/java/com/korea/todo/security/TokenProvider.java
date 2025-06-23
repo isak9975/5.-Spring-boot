@@ -76,7 +76,21 @@ public class TokenProvider {
 	}//end create
 	
 	//토큰을 생성하는 create메서드 오버로딩하기
+	//매개변수의 타입이 다르기 때문에 오버로딩이 간으하다.
 	public String create(Authentication authentication) {
+		
+		//authentication
+		//Principal(사용자정보)
+		//Authorities(권한목록)
+		//isAuthenticated()(인증여부)
+		//details(세션 정보 등)
+		
+		
+		//시큐리티 인증 객체에서  유저정보를 추출
+		ApplicationOAuth2User userPrincipal = (ApplicationOAuth2User)authentication.getPrincipal();
+		//반환타입이 Object이기 때문에 변경해주는것.
+		
+		
 		//토큰만료날짜
 		Date expiryDate = Date.from(Instant.now().plus(1,ChronoUnit.DAYS));
 		

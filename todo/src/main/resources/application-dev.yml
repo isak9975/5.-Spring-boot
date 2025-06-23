@@ -1,3 +1,6 @@
+server:
+  port: 5000
+
 custom:
   test-message: "dev profile loaded!"
 

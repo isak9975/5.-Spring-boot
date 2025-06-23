@@ -1,7 +1,5 @@
 package com.korea.todo.security;
 
-import java.security.AuthProvider;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -40,8 +38,15 @@ public class OAuthUserServiceImpl extends DefaultOAuth2UserService{
 	//additionalParameters : 인증 응답에 포함된 기타 파라미터들.
 	@Override
 	public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
+		//github로부터 받은 액세스 토큰을 이요해 사용자 정보를 가져온다
 		final OAuth2User oAuth2User = super.loadUser(userRequest);
 		try {
+//			getAttributes()
+//			{
+//				"login":"유저 이름",
+//				"id":"유저 아이디",
+//				"email":"유저 이메일"
+//			}
 			log.info("OAuth2User attributes {}",new ObjectMapper().writeValueAsString(oAuth2User.getAttributes()));
 			
 		} catch (Exception e) {
@@ -52,24 +57,31 @@ public class OAuthUserServiceImpl extends DefaultOAuth2UserService{
 		final String username = (String)oAuth2User.getAttributes().get("login");
 		
 		//어떤 인증 제공자로 로그인 했는지 구분하는 문자열
-		final String AuthProvider = userRequest.getClientRegistration().getClientName();
+			//우리의 경우 github라는 문자열이 저장된다
+		final String authProvider = userRequest.getClientRegistration().getClientName();
 		
 		
 		UserEntity userEntity = null;
 		
+		//사용자 이름이 db에 없다면 신규 등록
 		if(userRepository.existsByUsername(username)==false) {
 			//유저가 존재하지 않는다면 새로 만들어줘
 			userEntity = UserEntity
 					.builder()
 						.username(username)
-						.authProvider(AuthProvider)
+						.authProvider(authProvider)
 					.build();
 			
 			//데이터베이스에 저장
 			userEntity = userRepository.save(userEntity);	
+		}else {
+			userEntity = userRepository.findByUsername(username);
 		}
-		log.info("Sucess user info username {} authProvider {}",username,AuthProvider);
-		return null;
+		
+		
+		log.info("Sucess user info username {} authProvider {}",username,authProvider);
+		//저장한 유저로 부터 id와 유저의 정보를 ApplicationOAuth2User 클래스의 생성자의 매개변수로 전달. 
+		return new ApplicationOAuth2User(userEntity.getId(), oAuth2User.getAttributes());
 	}
 	
 

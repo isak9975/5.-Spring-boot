@@ -10,12 +10,14 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.DefaultSecurityFilterChain;
+import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.korea.todo.security.JwtAuthenticationFilter;
+import com.korea.todo.security.OAuthSucessHandler;
 import com.korea.todo.security.OAuthUserServiceImpl;
 
 import lombok.RequiredArgsConstructor;
@@ -28,7 +30,9 @@ public class WebSecurityConfig {
 	//필터 클래스 주입하기
 	private final JwtAuthenticationFilter jwtAuthenticationFilter;
 	
-	@Autowired OAuthUserServiceImpl oAuthUserServiceImpl;
+	@Autowired private OAuthUserServiceImpl oAuthUserServiceImpl;
+	
+	@Autowired private OAuthSucessHandler oAuthSucessHandler;
 	
 	//HttpSecurity http
 	//스프링 시큐리티에서 웹 보안 설정을 구성하기 위해 제공하는 보안 빌더 객체이다.
@@ -61,12 +65,21 @@ public class WebSecurityConfig {
 			//oauth2 로그인 설정
 			.redirectionEndpoint()
 			.baseUri("/oauth2/callback/*")
+			.and()
+			.authorizationEndpoint()
+			.baseUri("/auth/authorize") //기본값이 아닌 /auth/authorize/github형태로 요청
 			//http://localhost:5000/oauth2/callback/* 으로 들어오는 요청을
 			//redirectionEndpoint에 설정된 곳으로 리다이렉트 하라는 뜻
 			//아무 주소도 넣지 않았다면 baseUri인 'http://localhost:5000으로 리다이렉트 한다.'
 			.and()
 			.userInfoEndpoint() //OAuth2 인증이 성공한 후, 사용자 프로필 데이터를 가져오는 역
-			.userService(oAuthUserServiceImpl) //사용자 정볼르 처리하는 서비스를 지정.
+			.userService(oAuthUserServiceImpl) //사용자 정보를 처리하는 서비스를 지정.
+			.and()
+			.successHandler(oAuthSucessHandler)
+			.and()
+			.exceptionHandling()
+			//403를 띄우는 명령어
+			.authenticationEntryPoint(new Http403ForbiddenEntryPoint());
 			;
 			
 		
